@@ -30,10 +30,10 @@ public class MotorIOTalonFXSim extends MotorIOTalonFX {
 
         sim =
             new DCMotorSim(LinearSystemId.createDCMotorSystem(
-                this.config.motorType,
+                this.config.TYPE,
                 this.config.SIM_MOMENT_OF_INERTIA, 
                 this.config.SIM_GEAR_RATIO), 
-                this.config.motorType
+                this.config.TYPE
             );
     }
 
@@ -46,6 +46,7 @@ public class MotorIOTalonFXSim extends MotorIOTalonFX {
         sim.update(UPDATE_FREQUENCY_SECONDS);
 
         // connection and temperature are irrelavant in simulation
+        // so they are left in a happy condition
         inputs.connected = true;
         inputs.temperatureFault = false;
         inputs.temperatureCelsius = 0;

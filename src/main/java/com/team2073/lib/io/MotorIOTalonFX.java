@@ -33,15 +33,11 @@ public class MotorIOTalonFX implements MotorIO {
     protected final TalonFX talon;
     protected final ServoMotorConfig config;
 
-    // control requests
-    // these use the configured pid and motion magic
-    // set to the motor wit the exception of dutyCycleRequest
     protected final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0.0);
     protected final PositionVoltage positionRequest = new PositionVoltage(0.0);
     protected final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0.0);
     protected final VelocityVoltage velocityRequest = new VelocityVoltage(0.0);
 
-    // status signals
     private BaseStatusSignal[] signals;
     private final StatusSignal<Temperature> temperatureSignal;
     private final StatusSignal<Angle> positionSignal;                
@@ -50,13 +46,10 @@ public class MotorIOTalonFX implements MotorIO {
     private final StatusSignal<Current> supplyCurrentSignal;
     private final StatusSignal<Current> torqueCurrentSignal;
 
-    // debouncer to check if the motor is connected based on the status signals' error codes.
     private final Debouncer isConnected = new Debouncer(UPDATE_FREQUENCY_HZ);
 
     private final Alert connectionFault;
     private final Alert temperatureFault;
-
-    protected double temperatureThresholdCelsius;
 
     /**
      * A hardware implementation of {@link MotorIO} for a TalonFX motor controller.
@@ -65,9 +58,9 @@ public class MotorIOTalonFX implements MotorIO {
      */
     public MotorIOTalonFX(ServoMotorConfig config) {
         this.config = config;
-        this.talon = new TalonFX(this.config.id.getDeviceId(), this.config.id.getBus());
+        this.talon = new TalonFX(this.config.ID.getDeviceId(), this.config.ID.getBus());
         
-        CTREUtil.applyConfiguration(this.talon, this.config.talonConfig);
+        CTREUtil.applyConfiguration(this.talon, this.config.TALON_CONFIG);
 
         this.temperatureSignal = this.talon.getDeviceTemp();
         this.positionSignal = this.talon.getPosition();             
@@ -90,14 +83,12 @@ public class MotorIOTalonFX implements MotorIO {
             this.signals
         );
         
-        connectionFault = new Alert("CONNECTION FAULT, ID " + talon.getDeviceID() + ", " + config.motorName, AlertType.kError);
-        temperatureFault = new Alert("TEMPERATURE FAULT, ID " + talon.getDeviceID() + ", " + config.motorName, AlertType.kError);
-
-        temperatureThresholdCelsius = config.temperatureThresholdCelsius;
+        connectionFault = new Alert("CONNECTION FAULT, ID " + talon.getDeviceID() + ", " + config.NAME, AlertType.kError);
+        temperatureFault = new Alert("TEMPERATURE FAULT, ID " + talon.getDeviceID() + ", " + config.NAME, AlertType.kError);
     }
 
     private double clampPosition(double position) {
-        return MathUtil.clamp(position, config.reverseSoftStop, config.forwardSoftStop);
+        return MathUtil.clamp(position, config.REVERSE_SOFT_STOP, config.FORWARD_SOFT_STOP);
     }
 
     @Override
@@ -109,9 +100,10 @@ public class MotorIOTalonFX implements MotorIO {
         inputs.velocityRotationsPerSecond = velocitySignal.getValueAsDouble();
         inputs.appliedVoltage = voltageSignal.getValueAsDouble();
         inputs.supplyCurrentAmps = supplyCurrentSignal.getValueAsDouble();
-        temperatureFault.set(inputs.temperatureCelsius > temperatureThresholdCelsius);
+        temperatureFault.set(inputs.temperatureCelsius > config.TEMPERATURE_THRESHOLD_CELSIUS);
+        connectionFault.set(!inputs.connected);
         
-        if (inputs.temperatureCelsius > temperatureThresholdCelsius) {
+        if (inputs.temperatureCelsius > config.TEMPERATURE_THRESHOLD_CELSIUS) {
             inputs.temperatureFault = true;
         } else {
             inputs.temperatureFault = false;
@@ -145,12 +137,12 @@ public class MotorIOTalonFX implements MotorIO {
 
     @Override
     public void enablePositionSoftStops(boolean forwardSoftLimit, boolean reverseSoftLimit) {
-        CTREUtil.applyConfiguration(talon, config.talonConfig);
+        CTREUtil.applyConfiguration(talon, config.TALON_CONFIG);
     }
 
     @Override
     public void setNeutralMode(NeutralModeValue mode) {
-        config.talonConfig.MotorOutput.NeutralMode = mode;
-        CTREUtil.applyConfiguration(talon, config.talonConfig);
+        config.TALON_CONFIG.MotorOutput.NeutralMode = mode;
+        CTREUtil.applyConfiguration(talon, config.TALON_CONFIG);
     }
 }

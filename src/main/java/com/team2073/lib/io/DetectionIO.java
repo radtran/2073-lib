@@ -4,6 +4,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import java.util.List;
 
+/**
+ * Interface that provides the methods for 
+ * detecting and tracking game pieces.
+ */
+
 public interface DetectionIO {
     public void update(); 
 

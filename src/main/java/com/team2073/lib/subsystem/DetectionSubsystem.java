@@ -28,9 +28,14 @@ public class DetectionSubsystem<IO extends DetectionIO> extends SubsystemBase {
     }
 
     /**
-     * Gets the closest game piece 
+     * Gets the closest game piece. 
      *
-     * @returns the game piece
+     * <p>
+     *
+     * This should be used mainly for drive to pose
+     * commands so that the robot is able to autonomously pick up game pieces.
+     *
+     * @returns the game piece, null if there are no game pieces
      */
 
     public Pose2d getClosestGamePiece() {
@@ -42,7 +47,7 @@ public class DetectionSubsystem<IO extends DetectionIO> extends SubsystemBase {
     /**
      * Gets a List of targets 
      *
-     * @returns the targets
+     * @returns the targets, null if there are no targets
      */
     @AutoLogOutput(key = "API/DetectionSubsystem/getTargets/targets")
     public List<Pose2d> getTargets() {

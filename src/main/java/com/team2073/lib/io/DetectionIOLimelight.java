@@ -35,9 +35,10 @@ public class DetectionIOLimelight implements DetectionIO {
     public void update() {
         targets.clear();
 
-        // if no targets
-        if (table.getEntry("tv").getDouble(0) == 0) {
+        boolean noTargets = table.getEntry("tv").getDouble(0) == 0;
+        if (noTargets) {
             closestGamePiece = null;
+            targets = null;
             return;
         }
 
@@ -52,7 +53,9 @@ public class DetectionIOLimelight implements DetectionIO {
             targets.add(new Pose2d(calcGamePieceLocation(tx, ty), new Rotation2d()));
         }
 
-        targets.stream()
+        // looks very complicated bc you get the norm (distance away from (0,0)) and it is better
+        // at comparing targets whose distances are almost the same.
+        closestGamePiece = targets.stream()
             .min((a, b) -> Double.compare(
                         a.getTranslation().getNorm(), 
                         b.getTranslation().getNorm()))
