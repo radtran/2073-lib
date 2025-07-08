@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 import com.team2073.lib.config.ServoMotorConfig;
-import com.team2073.lib.util.MotorInputs;
+import com.team2073.lib.inputs.MotorInputs;
 
 /**
  * Simulation implementation of the {@link MotorIO} interface for a TalonFX motor controller.

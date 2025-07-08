@@ -27,7 +27,6 @@ public class DetectionIOLimelightSim extends DetectionIOLimelight  {
         super.update(inputs);
 
         inputs.closestGamePiece = targetPose;
-        inputs.targets.add(targetPose);
         inputs.hasTargets = true;
     }
 }

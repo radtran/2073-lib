@@ -4,6 +4,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.util.Units;
 import static edu.wpi.first.units.Units.*;
+
+import java.util.List;
+import java.util.ArrayList;
+
 import edu.wpi.first.units.measure.Distance;
 import com.team2073.lib.limelight.LimelightHelpers;
 import com.team2073.lib.config.LimelightConfig;
@@ -14,15 +18,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.littletonrobotics.junction.Logger;
 
 public class DetectionIOLimelight implements DetectionIO {
     private NetworkTable table;
     private LimelightConfig config;
     private Distance centerOfGamepiece = Inches.of(2);
+    private List<Pose2d> targets = new ArrayList<>();
     
     public DetectionIOLimelight(LimelightConfig config) {
         this.config = config;
@@ -32,12 +34,12 @@ public class DetectionIOLimelight implements DetectionIO {
 
     @Override
     public void update(DetectionInputs inputs) {
-        inputs.targets.clear();
+        targets.clear();
 
         inputs.hasTargets = table.getEntry("tv").getDouble(0) == 1;
         if (!inputs.hasTargets) {
             inputs.closestGamePiece = null;
-            inputs.targets = null;
+            targets = null;
             return;
         }
 
@@ -49,12 +51,12 @@ public class DetectionIOLimelight implements DetectionIO {
             Logger.recordOutput("API/" + config.NAME + "/update/tx", tx);
             Logger.recordOutput("API/" + config.NAME + "/update/ty", ty);
 
-            inputs.targets.add(new Pose2d(calcGamePieceLocation(tx, ty), new Rotation2d()));
+           targets.add(new Pose2d(calcGamePieceLocation(tx, ty), new Rotation2d()));
         }
 
         // looks very complicated bc you get the norm (distance away from (0,0)) and it is better
         // at comparing targets whose distances are almost the same.
-        inputs.closestGamePiece = inputs.targets.stream()
+        inputs.closestGamePiece = targets.stream()
             .min((a, b) -> Double.compare(
                         a.getTranslation().getNorm(), 
                         b.getTranslation().getNorm()))

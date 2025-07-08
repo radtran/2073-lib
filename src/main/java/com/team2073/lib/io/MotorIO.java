@@ -2,7 +2,7 @@ package com.team2073.lib.io;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import com.team2073.lib.inputs.DetectionInputs;
+import com.team2073.lib.inputs.MotorInputs;
 
 /**
  * This interface provides methods

@@ -5,9 +5,8 @@ import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import com.team2073.lib.inputs.MotorInputsAutoLogged;
 import com.team2073.lib.io.MotorIO;
-import com.team2073.lib.util.MotorInputsAutoLogged;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
