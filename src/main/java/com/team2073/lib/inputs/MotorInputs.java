@@ -1,4 +1,4 @@
-package com.team2073.lib.util;
+package com.team2073.lib.inputs;
 
 import org.littletonrobotics.junction.AutoLog;
 

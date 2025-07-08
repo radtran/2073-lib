@@ -11,7 +11,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import com.team2073.lib.util.CTREUtil;
 import com.team2073.lib.config.ServoMotorConfig;
-import com.team2073.lib.util.MotorInputs;
+import com.team2073.lib.inputs.MotorInputs;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.Debouncer;

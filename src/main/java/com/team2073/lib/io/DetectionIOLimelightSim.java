@@ -2,14 +2,16 @@ package com.team2073.lib.io;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
-
 import com.team2073.lib.config.LimelightConfig;
+import com.team2073.lib.inputs.DetectionInputs;
 
 /**
- * Simulation implementation of a Limelight for detection
+ * Simulation implementation of a Limelight for detection.
+ *
+ * <p>
+ *
+ * This is just for testing purpose like driving to a point where a game piece could be cause 
+ * there's obviously not going to be game pieces in sim lol.
  */
 
 public class DetectionIOLimelightSim extends DetectionIOLimelight  {
@@ -21,12 +23,11 @@ public class DetectionIOLimelightSim extends DetectionIOLimelight  {
     }
 
     @Override
-    public Pose2d getClosestGamePiece() {
-        return targetPose;
-    }
+    public void update(DetectionInputs inputs) {
+        super.update(inputs);
 
-    @Override
-    public List<Pose2d> getTargets() {
-        return new ArrayList<Pose2d>(Arrays.asList(targetPose)); 
+        inputs.closestGamePiece = targetPose;
+        inputs.targets.add(targetPose);
+        inputs.hasTargets = true;
     }
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.units.measure.Distance;
 import com.team2073.lib.limelight.LimelightHelpers;
 import com.team2073.lib.config.LimelightConfig;
 import com.team2073.lib.limelight.LimelightHelpers.RawDetection;
+import com.team2073.lib.inputs.DetectionInputs;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,67 +23,56 @@ public class DetectionIOLimelight implements DetectionIO {
     private NetworkTable table;
     private LimelightConfig config;
     private Distance centerOfGamepiece = Inches.of(2);
-    private List<Pose2d> targets = new ArrayList<Pose2d>();
-    private Pose2d closestGamePiece;
     
     public DetectionIOLimelight(LimelightConfig config) {
         this.config = config;
 
-        table = NetworkTableInstance.getDefault().getTable(config.name);
+        table = NetworkTableInstance.getDefault().getTable(config.NAME);
     }
 
     @Override
-    public void update() {
-        targets.clear();
+    public void update(DetectionInputs inputs) {
+        inputs.targets.clear();
 
-        boolean noTargets = table.getEntry("tv").getDouble(0) == 0;
-        if (noTargets) {
-            closestGamePiece = null;
-            targets = null;
+        inputs.hasTargets = table.getEntry("tv").getDouble(0) == 1;
+        if (!inputs.hasTargets) {
+            inputs.closestGamePiece = null;
+            inputs.targets = null;
             return;
         }
 
-        RawDetection[] detections = LimelightHelpers.getRawDetections(config.name);
+        RawDetection[] detections = LimelightHelpers.getRawDetections(config.NAME);
         for (RawDetection detection : detections) {
             double tx = detection.txnc;
             double ty = detection.tync;
 
-            Logger.recordOutput("API/" + config.name + "/update/tx", tx);
-            Logger.recordOutput("API/" + config.name + "/update/ty", ty);
+            Logger.recordOutput("API/" + config.NAME + "/update/tx", tx);
+            Logger.recordOutput("API/" + config.NAME + "/update/ty", ty);
 
-            targets.add(new Pose2d(calcGamePieceLocation(tx, ty), new Rotation2d()));
+            inputs.targets.add(new Pose2d(calcGamePieceLocation(tx, ty), new Rotation2d()));
         }
 
         // looks very complicated bc you get the norm (distance away from (0,0)) and it is better
         // at comparing targets whose distances are almost the same.
-        closestGamePiece = targets.stream()
+        inputs.closestGamePiece = inputs.targets.stream()
             .min((a, b) -> Double.compare(
                         a.getTranslation().getNorm(), 
                         b.getTranslation().getNorm()))
             .orElse(null);
-    }
 
-    @Override
-    public Pose2d getClosestGamePiece() {
-        return closestGamePiece;
-    }
-
-    @Override
-    public List<Pose2d> getTargets() {
-        return targets;
     }
 
     private Translation2d calcGamePieceLocation(double tx, double ty) {
-        double correctedTy = Units.degreesToRadians(-ty) - config.robotCameraOffset.getRotation().getY();
-        Distance yDistance =  config.robotCameraOffset.getMeasureZ().minus(centerOfGamepiece).div(Math.tan(correctedTy));
+        double correctedTy = Units.degreesToRadians(-ty) - config.ROBOT_CAMERA_OFFSET.getRotation().getY();
+        Distance yDistance =  config.ROBOT_CAMERA_OFFSET.getMeasureZ().minus(centerOfGamepiece).div(Math.tan(correctedTy));
 
-        double correctedTx = Units.degreesToRadians(-tx) + config.robotCameraOffset.getRotation().getZ();
+        double correctedTx = Units.degreesToRadians(-tx) + config.ROBOT_CAMERA_OFFSET.getRotation().getZ();
         Distance xDistance = yDistance.times((Math.tan(correctedTx)));
 
-        Logger.recordOutput("API/" + config.name + "/calcGamePieceLocation/correctedTy", correctedTy);
-        Logger.recordOutput("API/" + config.name + "/calcGamePieceLocation/correctedTx", correctedTx);
-        Logger.recordOutput("API/" + config.name + "/calcGamePieceLocation/xDistance", xDistance);
-        Logger.recordOutput("API/" + config.name + "/calcGamePieceLocation/yDistance", yDistance);
+        Logger.recordOutput("API/" + config.NAME + "/calcGamePieceLocation/correctedTy", correctedTy);
+        Logger.recordOutput("API/" + config.NAME + "/calcGamePieceLocation/correctedTx", correctedTx);
+        Logger.recordOutput("API/" + config.NAME + "/calcGamePieceLocation/xDistance", xDistance);
+        Logger.recordOutput("API/" + config.NAME + "/calcGamePieceLocation/yDistance", yDistance);
 
         return new Translation2d(xDistance, yDistance);
     }
