@@ -18,17 +18,16 @@ import edu.wpi.first.math.system.plant.DCMotor;
  */
 
 public class MotorConfig {
-    public CANDeviceId id;
-    public DCMotor type;
-    public String name;
-    public TalonFXConfiguration talonConfig; 
+    public CANDeviceId id = new CANDeviceId(-1, "NO_BUS");
+    public DCMotor type = DCMotor.getKrakenX60(1);
+    public String name = "UNNAMED";
+    public TalonFXConfiguration talonConfig = new TalonFXConfiguration(); 
 
-    // if no stops, set to Double.POSITIVE_INFINITY or Double.NEGATIVE_INFINITY
-    public double forwardSoftStop;
-    public double reverseSoftStop;
+    public double forwardSoftStop = Double.POSITIVE_INFINITY;
+    public double reverseSoftStop = Double.NEGATIVE_INFINITY;
 
-    public double momentOfInertia;
-    public double gearRatio;
+    public double momentOfInertia = 0.01;
+    public double gearRatio = 1.0;
 
-    public double temperatureThresholdCelsius;
+    public double temperatureThresholdCelsius = 80.0;
 }
