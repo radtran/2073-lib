@@ -17,18 +17,18 @@ import edu.wpi.first.math.system.plant.DCMotor;
  * It is just important to set the main properties of the motor.
  */
 
-public class ServoMotorConfig {
-    public CANDeviceId ID;
-    public DCMotor TYPE;
-    public String NAME;
-    public TalonFXConfiguration TALON_CONFIG; 
+public class MotorConfig {
+    public CANDeviceId id;
+    public DCMotor type;
+    public String name;
+    public TalonFXConfiguration talonConfig; 
 
     // if no stops, set to Double.POSITIVE_INFINITY or Double.NEGATIVE_INFINITY
-    public double FORWARD_SOFT_STOP;
-    public double REVERSE_SOFT_STOP;
+    public double forwardSoftStop;
+    public double reverseSoftStop;
 
-    public double SIM_MOMENT_OF_INERTIA;
-    public double SIM_GEAR_RATIO;
+    public double momentOfInertia;
+    public double gearRatio;
 
-    public double TEMPERATURE_THRESHOLD_CELSIUS;
+    public double temperatureThresholdCelsius;
 }

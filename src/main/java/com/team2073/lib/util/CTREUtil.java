@@ -5,8 +5,10 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,8 +43,13 @@ public class CTREUtil {
         return tryUntilOK(() -> cancoder.getConfigurator().apply(config), cancoder.getDeviceID());
     }
 
+    public static StatusCode applyConfiguration(Pigeon2 pigeon2, Pigeon2Configuration config) {
+        return tryUntilOK(() -> pigeon2.getConfigurator().apply(config), pigeon2.getDeviceID());
+    }
+
     public static StatusCode refreshConfiguration(TalonFX motor, TalonFXConfiguration config) {
         return tryUntilOK(() -> motor.getConfigurator().refresh(config), motor.getDeviceID());
     }
+
 }
 
